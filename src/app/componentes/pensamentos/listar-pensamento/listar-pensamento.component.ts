@@ -16,6 +16,11 @@ export class ListarPensamentoComponent implements OnInit {
     {
       conteudo: 'Minha propiedade é decorada com @Input() ',
       autoria: 'Componente filho',
+      modelo: 'modelo2'
+    },
+    {
+      conteudo: 'Mussum Ipsum, cacilds vidis litro abertis.  Interessantiss quisso pudia ce receita de bolis, mais bolis eu num gostis. Hoje é sexta-feris, dia da maldadis! Eu nunca mais boto a boca num copo de cachaça, agora eu só uso canudis! Praesent vel viverra nisi. Mauris aliquet nunc non turpis scelerisque, eget.',
+      autoria: 'Mussum Ipsum',
       modelo: 'modelo3'
     }
 
