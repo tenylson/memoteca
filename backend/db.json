@@ -1,0 +1,26 @@
+{
+    "pensamentos": [
+        {
+            "id":1,
+            "conteudo": "Que bom que veio",
+            "autoria": "Nay",
+            "modelo": "modelo1"
+
+        },
+        {
+            "id":2,
+            "conteudo": "Estudar Angular e foda",
+            "autoria": "Dev",
+            "modelo": "modelo2"
+
+        },
+        {
+            "id":3,
+            "conteudo": "Angula é o melhor",
+            "autoria": "Nay",
+            "modelo": "modelo3"
+
+        }
+
+    ]
+}
