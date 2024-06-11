@@ -63,9 +63,68 @@ Para isso, acessaremos no arquivo `app.module.ts`. Na seção imports, digitarem
 
 No template substituir o atributo `[value]` pela diretiva `[(ngModel)]`, envolvendo-a em parênteses e colchetes por fora.
 
-`<input type="textarea" class="input" id="pensamento" name="pensamento" placeholder="Digite o pensamento" [(ngModel)]="pensamento.conteudo">`
-
+```
+<input type="textarea" 
+    class="input" 
+    id="pensamento" 
+    name="pensamento" 
+    placeholder="Digite o pensamento" 
+  [(ngModel)]="pensamento.conteudo">
+```
 ![Two Way Data Binding](src/assets/imagens/two-way-data-bind.png)
 
+## 03 - Navegação com roteamento
+
+### Utilizar o RouterModule;
+
+
+### Utilizar a diretiva <router-outlet>;
+Com o `router-outlet`, informamos ao Angular que queremos que os componentes sejam carregados dinamicamente atravez de roteamento.
+No arquivo app.componets.html
+```
+<app-cabecalho></app-cabecalho>
+<main>
+    <router-outlet></router-outlet>
+</main>
+<app-rodape></app-rodape>
+```
+
+### Criar e configurar rotas;
+
+no arquivo 'app-routing.module.ts' modificaremos o trecho `const routes: Routes = [];`
+
+adicionando as rotas dos componetes criados dessa forma:
+```
+const routes: Routes = [
+    {
+        path: 'criarPensamento',
+        component: CriarPensamentoComponent
+    },
+    {
+        path: 'listarPensamento',
+        component: ListarPensamentoComponent
+    }
+    
+];
+```
+Com essa configurção ao acessar http://localhost:4200/criarPensamento/ o elemento será carregado na página .
+
+
+Devemos criar também um path para a página inicial, com uma string vazia, que realizará um redirecionamento para o nosso mural de pensamentos.
+```
+{
+    path: '',
+    redirectTo: 'listarPensamento'
+    pathMatch: 'full'
+}
+```
+Assim, toda vez que acessarem a url raiz: http://localhost:4200/ será redirecionado pra rota configurada em `redirectTo`
+
+
+
+
+
+
+### Navegar por meio da propriedade routerLink.
 
 
