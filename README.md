@@ -27,24 +27,7 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
 
 
-# Angular
 
-## Generate Component
+# Angular 14 
 
-Abra o terminal, e digite o comando ng `generate` e o caminho `componentes` juntamente com o nome do componente, que será "cabecalho":
-
-`ng generate component componentes/cabecalho`
-
-Será gerado os seguintes artefatos:
-
-- cabecalho.component.css
-- cabecalho.component.html
-- cabecalho.component.spec.ts
-- cabecalho.component.ts
-
-Obs.: Você pode digitar a versão curta do comando: `ng g c componentes/cabecalho`
-
-
-
-
-
+[Curso Angula 14 ](CURSO-ANGULAR.md)
