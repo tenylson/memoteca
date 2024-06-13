@@ -219,14 +219,81 @@ Acessaremos o arquivo `pensamento.component.ts` e criaremos o método `larguraPe
     return 'pensamento-p'
   }
 ```
-No arquivo `pensamento.component.html` na div de classe `pensamento`. Utilizaremos o ngClass em seu lugar, que receberá a expressão larguraPensamento criada no arquivo TS.
+No arquivo `pensamento.component.html` na div de classe `pensamento`. Utilizaremos o `ngClass` em seu lugar, que receberá a expressão larguraPensamento criada no arquivo TS.
 ```
 <div class="pensamento {{ pensamento.modelo }} ff-roboto-mono" [ngClass]="larguraPensamento()">
 ```
+## 05 - 0Cumunicação com o Backend
 
 
+### Utilizar o JSON-Server simulando uma API REST;
+
+[Json-Server](backend/README.md)
+
+### Criar uma interface para definir tipos personalizados;
+
+A interface serve para definir a estrutura e o formato dos objetos que serão utilizados na aplicação Angular. Ela atua como um "contrato" entre o front-end e o back-end, garantindo que os dados sejam transmitidos e manipulados corretamente.
+
+Criaremos uma interface diretamente no explorador à esquerda. Dentro da pasta pensamentos, damos um clique com o botão direito e criamos um novo arquivo chamado pensamento.ts. 
+
+Dentro de `pensamento.ts`, criaremos uma interface de nome `Pensamento`, com inicial maiúscula. Nesta interface, colocaremos todos os atributos e os respectivos formatos esperados. Também incluiremos a classe export, para tornar essa interface acessível à outras classes.
+```
+export interface Pensamento {
+    id: number
+    conteudo: string
+    autoria: string
+    modelo: string
+}
+```
+
+Como a interface que inserimos ajuda dentro da aplicação? Se tivéssemos incluído um atributo com o formato errado ou se esquecêssemos de informar algum atributo, o VS Code sinalizaria o erro.
+
+Acessaremos três arquivos typescript e dentro deles vamos inserir a variável Pensamento, que deve receber a tipagem de Pensamento. Após o "Enter", a aplicação fará o import automático dessa variável.
+
+- A primeira inclusão será feita no arquivo `pensamento.component.ts`.
+```
+@Input() pensamento: Pensamento = {
+    id: 0, // colocamos o valor 0 pois os dados reais do `id` virão do componente "pai".
+    conteudo: 'I love Angular',
+    autoria: 'Nay',
+    modelo: 'modelo3'
+}
+```
+- A segunda inclusão será feita no arquivo `criar-pensamento.component.ts`.
+```
+pensamento: Pensamento = {
+    id: 1,
+    conteudo: 'Aprendendo Angular'
+    autoria: 'Dev',
+    modelo: 'modelo1'
+}
+```
+- A terceira inclusão será feita no arquivo `listar-pensamento.component.ts`.
+`    listaPensamentos: Pensamento[] = [];
+`
 
 
+#### Entender a importância do Service e o novo decorator @Injectable();
 
+O Service no Angular é uma classe TypeScript que contém a lógica de negócios e a comunicação com o servidor. Algumas características importantes sobre os Services:
 
+- São criados através do comando `ng g s` no terminal do VS Code.
+São marcados com o decorador @Injectable, que permite a injeção de dependências.
+- Possuem o metadado `providedIn` com o valor `root`, indicando que podem ser utilizados em toda a aplicação.
+- Têm um construtor onde podem ser injetadas outras dependências.
+Podem conter métodos de `CRUD (Create, Read, Update, Delete)` para interagir com o backend.
+- A injeção de dependências é um conceito importante no Angular, pois permite que os Services sejam facilmente reutilizados em diferentes componentes da aplicação. Isso ajuda a manter o código organizado e facilita a manutenção.
 
+```
+import { Injectable } from '@angular/core';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class PensamentoService {
+
+    constructor() { }
+}
+```
+
+### Injetar dependências.
