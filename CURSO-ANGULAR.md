@@ -311,5 +311,251 @@ export class PensamentoService {
 }
 ```
 
+## 05 - Requisições HTTP
+
+As requisições HTTP são a forma como os aplicativos web se comunicam com o servidor. Elas são a base da comunicação na web, permitindo que os clientes (como um navegador web) enviem solicitações para o servidor e recebam respostas.
+Métodos HTTP: GET, POST, PUT, DELETE, etc. Esses métodos definem a ação que o cliente deseja realizar no servidor.
+
+### Utilizar métodos de requisição HTTP com serviço HttpClient;
+
+Dentro do VS Code acessaremos o arquivo `pensamento.service.ts` e utilizaremos os métodos `HTTP` já injetados na classe para construir o `CRUD`. Começaremos pelo método de listagem, criando o atributo API.
+
+Voltando ao interior da classe, dentro do exportvamos inserir o comando abaixo:
+
+`private readonly API = 'http://localhost:3000/pensamentos'`
 
 
+Ainda dentro do export, abaixo do constructor acrescentaremos o método listar. Dentro do método vamos inserir o comando return com o método get. Adicionaremos também a tipagem Pensamento[] que possui um arranjo de pensamentos.
+
+    listar() {
+        return this.http.get<Pensamento[]>(this.API)
+    }
+
+Para poder utilizar o HttpClient é preciso importar o seu módulo. Acessaremos o arquivo `app.module.ts` e na seção imports, abaixo de outros módulos já configurados, adicionaremos uma vírgula (,) e em seguida o módulo `HttpClientModule`.
+
+```
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        HttpClientModule
+  ],
+```
+A própria aplicação inserirá automaticamente o comando de importação abaixo. Caso contrário, podemos inseri-lo manualmente.
+
+`import { HttpClientModule} from '@angular/common/http';`
+
+Com este processo feito, temos um método dentro do service que solicitará ao `HTTP` a lista de pensamentos que se encontra na API e que vai recebê-la na forma de um arranjo de pensamentos.
+
+Vamos acessar o arquivo `listar-pensamento.component.ts` e configurá-lo para consumir o serviço. Liberaremos o acesso aos métodos declarados no service injetando-o dentro do construtor na seção export.
+
+```
+export class ListarPensamentoComponent implements OnInit {
+
+    listaPensamentos: Pensamento[] = [];
+
+    constructor(private service: PensamentoService) { }
+```
+
+Vamos inserir o método `listar()` que configuramos anteriormente dentro da seção `ngOnInit()` que se encontra abaixo do export. Essa seção faz parte da configuração do ciclo de vida do componente, portanto, nós vamos inserir dentro dela qualquer comando que queremos executar junto ao carregamento do componente.
+```
+ngOnInit(): void {
+    this.service.listar()
+}
+
+```
+
+### Utilizar o Observable no retorno dos métodos HTTP;
+
+O Observable funciona de forma similar ao promise do Javascript, mas com a vantagem de possuir uma transferência de dados contínua. Ou seja, o Observable é capaz de emitir dados várias vezes durante a sua existência. Este comando faz parte da biblioteca RXJS, que é utilizada de forma camuflada pelo Angular e já vem instalada na aplicação.
+
+Descobriremos o funcionamento do Observable para listar os pensamentos na tela do nosso mural. Primeiro, vamos acessar o arquivo pensamento.service.ts e inserir o Observable de Pensamento no método `listar()` do serviço `pensamento.service.ts`.
+```
+    import { Observable } from 'rxjs';
+    // Trecho de código omitido
+
+    listar(): Observable<Pensamento[]> {
+        // Trecho de código omitido
+    }
+```
+Em seguida vamos inserir a função do tipo arrow function para permitir que a lista do serviço receba a lista do Observable no componete `listar-pensamento.component.ts`.
+```
+    ngOnInit(): void {
+        this.service.listar().subscribe((listaPensamentos) => {
+            this.listapensamentos = listapensamentos
+        });
+    }
+```
+#### Criar Pensamento
+Acessaremos novamente o VS Code e configuraremos o cadastro. Dentro do arquivo `pensamento.service.ts`, abaixo do método de listagem, digitaremos o método `criar()` e dentro dele vamos inserir a variável pensamento do tipo Pensamento, que também retornará um Observable de Pensamento, mas dessa vez o retorno não será um arranjo.
+
+Dentro de criar(), vamos inserir um return com o método post, a URL da API e também o pensamento que iremos cadastrar.
+```
+    criar(pensamento: Pensamento): Observable<Pensamento> {
+        return this.http.post<Pensamento>(this.API, pensamento)
+    }
+```
+
+Acessaremos o arquivo `criar-pensamento.component.ts` para consumir o serviço. Dentro do constructor, injetaremos o serviço private service do tipo PensamentoService, que será importado automaticamente no componente. Em seguida, iremos até o método `criarPensamento()`, apagaremos o alert que criamos anteriormente e em seu lugar adicionaremos o serviço.
+```
+    criarPensamento() {
+        this.service.criar(this.pensamento).subscribe()
+    }
+```
+Acessaremos a classe pensamento e apagaremos os conteúdos de `conteudo`, `autoria` e `modelo`, já que a partir de agora eles serão gerados pelo método criar(). Apagaremos também a variável `id` por completo, o que gerará um erro que vamos corrigir em outro arquivo.
+```
+    pensamento: Pensamento = {
+        conteudo: '',
+        autoria: '',
+        modelo: ''
+    }
+```
+Para corrigir o erro de id, acessaremos o arquivo da interface `pensamento.ts` e alteraremos a variável `id` inserindo um ponto de interrogação (?). Assim, o id se torna uma variável opcional.
+```
+export interface Pensamento {
+    id?: number
+    conteudo: string
+    autoria: string
+    modelo: string
+}
+```
+
+Nós queremos que, ao salvar ou cancelar, haja um redirecionamento para a página do mural. Para isso, vamos utilizar uma funcionalidade de rotas chamada `router`. Dentro do constructor de `criar-pensamento.component.ts`, vamos inserir esse serviço.
+```
+    constructor(
+        private service: PensamentoService,
+        private router: Router
+    ) { }
+```
+Dentro de criarPensamento vamos inserir uma arrow function (função seta) (=>) que retorna o router com o método navigate. Este por sua vez receberá o caminho para onde queremos que a página seja redirecionada. Note que a rota fornecida estará dentro de um Event Binding.
+```
+    criarPensamento() {
+        this.service.criar(this.pensamento).subscribe(() => {
+            this.router.navigate(['/listarPensamento'])
+        )}
+```
+Faremos o mesmo processo para o botão de cancelar. Primeiro, acessaremos o arquivo `criar-pensamento.component.html` e deletaremos o `routerLink` que configuramos anteriormente dentro do button, para centralizar os redirecionamentos no arquivo TS. Abaixo podemos ver como ficou o código após a retirada desse comando.
+```
+    <div class="acoes">
+        //Trecho de código omitido
+        <button (click)="cancelar()" class="botao">Cancelar</button>
+    </div>
+```
+Voltando ao arquivo `criar-pensamento.component.ts`, vamos inserir a mesma função de `criarPensamento()` dentro de `cancelar()`
+```
+    cancelar() {
+        this.router.navigate(['/listarPensamento'])
+    }
+```
+### Excluir Pensamento
+Agora que concluímos o cadastro e a listagem de pensamentos, continuaremos com as outras funcionalidades do "CRUD".
+
+Pare o terminal do front-end. Para fins de didática, criaremos um novo componente que será responsável pela exclusão dos pensamentos, assim manteremos cada função do CRUD separada em um componente diferente.
+
+`ng g c componentes/pensamentos/excluir-pensamento`
+
+Substitua ó código gerado em `excluir-pesamento.component.html` por esse:
+```
+<section class="container excluir-pensamentos ff-inter">
+    <div class="modal">
+        <p>O pensamento será deletado. <br/> Confirma a exclusão?</p>
+        <div class="acoes">
+            <button class="botao botao-excluir" (click)="excluirPensamento()">Excluir</button>
+            <button class="botao botao-cancelar" (click)="cancelar()">Cancelar</button>
+        </div>
+    </div>
+    <div class="overlay"></div>//deixa o resto da págna escura
+</section>
+```
+Acessaremos `pensamento.service.ts` e criaremos a função `excluir`, que precisará do endereço e do `id` do pensamento a ser excluído. Vamos inserir o `id` do pensamento e um `Observable` de `Pensamento`. Dentro da função, criaremos uma `const` (ou constante) com o nome `url`. Em seguida configuraremos o retorno através do método delete junto à `URL`. Este método fará a exclusão do pensamento.
+```
+    excluir(id: number): Observable<Pensamento> {
+        const url = `${this.API}/${id}`
+        return this.http.delete<Pensamento>(url)
+    }
+```
+Abaixo de `excluir()`, criaremos outro método para buscar um pensamento pelo `id`. Vamos passar o parâmetro `id` que retornará um `observable` de Pensamento. Criaremos também uma  `const` idêntica à do método excluir, porém utilizaremos o método `get` como retorno, pois queremos somente buscar um 
+pensamento.
+```
+    buscarPorId(id: number): Observable<Pensamento> {
+        const url = `${this.API}/${id}`
+        return this.http.get<Pensamento>(url)
+    }
+```
+
+Acessaremos o arquivo `excluir-pensamento.component.ts`, criaremos o parâmetro `pensamento` do tipo `Pensamento` e em seguida vamos inserir algumas variáveis vazias. Em seguida faremos o import da classe `Pensamento`.
+```
+    pensamento: Pensamento = {
+        id: 0,
+        conteudo: '',
+        autoria: '',
+        modelo: ''
+    }
+```
+Dentro do constructor injetaremos os serviços que vamos utilizar: `PensamentoService`, `router`. Vamos inserir também o serviço `route` do tipo `ActivatedRoute`, que fornecerá informações sobre as rotas dos cartões de pensamento. Aliado a outros métodos como `snapshot` e `paramMap`, conseguiremos informações sobre os cartões em momentos específicos.
+
+```
+ import { ActivatedRoute, Router } from '@angular/router';
+
+ // Trecho de código omitido
+
+    constructor(
+        private service: PensamentoService,
+        private router: Router,
+        private route: ActivatedRoute
+    ) { }
+```
+#### Capturar parâmetros em rotas;
+Dentro do método `ngOnInit()` criaremos uma contante de nome `id` que receberá as propriedades `snapshot` — uma captura ou fotografia da rota no momento em que for acessada — e `paramMap`, que retorna um mapa com informações obrigatórias e opcionais do pensamento. Adicionaremos também o método `get('id')`.
+```
+    ngOnInit(): void {
+        const id = this.route.snapshot.paramMap.get('id')
+    }
+```
+A combinação de comandos acima será responsável por obter o id do pensamento para possibilitar a sua exclusão.
+
+Abaixo da const `id`, adicionaremos o serviço `buscarPorId` que possuirá um `subscribe` para pensamento e receberá um pensamento dentro de `this.pensamento`. Utilizaremos a _arrow function_ para construir a lógica.
+```
+    ngOnInit(): void {
+        const id = this.route.snapshot.paramMap.get('id')
+        this.service.buscarPorId(parseInt(id!)).subscribe((pensamento) => {
+            this.pensamento = pensamento
+        })
+    }
+```
+Criaremos o método `excluirPensamento()` no `component` para resolver o erro que causamos dentro do arquivo HTML. Nele haverá o serviço `excluir` baseado do `id` do pensamento e um redirecionamento para o mural.
+```
+    excluirPensamento() {
+        if(this.pensamento.id) {
+            this.service.excluir(this.pensamento.id).subscribe(() => {
+                this.router.navigate(['/listarPensamento'])
+            })
+        }
+    }
+```
+Criaremos o método cancelar() abaixo do método de exclusão. Este método fará somente o redirecionamento para o mural de pensamentos.
+```
+cancelar() {
+    this.router.navigate(['/listarPensamento'])
+  }
+```
+
+Antes de testarmos o código, acessaremos o arquivo de rotas `app-routing.module.ts` e na constante `routes` criaremos a rota (path) do componente `excluirPensamento`. Faremos também a importação do componente clicando em "Quick fix... > Add import from".
+```
+const routes: Routes = [
+    //Trecho de código omitido
+    {
+            path: 'pensamentos/excluirPensamento/:id',
+            component: ExcluirPensamentoComponent
+    }
+    //Trecho de código omitido
+];
+```
+Em seguida acessaremos o HTML do componente do cartão: `pensamento.component.html` para inserir o `routerLink` no botão de exclusão e uma interpolação (`{{}}`) para adquirir o `id`.
+```
+        <button class="botao-excluir" routerLink="/pensamentos/excluirPensamento/{{pensamento.id}}">
+            <img src="/assets/imagens/icone-excluir.png" alt="Ícone de excluir">
+        </button>
+```
+Pronto, agora vamos testar o código. Inicie o front-end caso não esteja rodando com `ng serve`.
+### Criar um CRUD.
