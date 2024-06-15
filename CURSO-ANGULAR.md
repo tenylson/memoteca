@@ -297,3 +297,19 @@ export class PensamentoService {
 ```
 
 ### Injetar dependências.
+
+A injeção de dependências é um conceito importante no Angular, pois permite que os Services sejam facilmente reutilizados em diferentes componentes da aplicação. Isso ajuda a manter o código organizado e facilita a manutenção.
+
+No arquivo `pensamento.service.ts`, vamos adicionar o `HttpClient` para implementar os métodos do "CRUD". A classe PensamentoService depende dessa funcionalidade.
+
+`import { HttpClient } from '@angular/common/http';`
+
+Queremos que a instância de `HttpClient` seja injetada automaticamente no PensamentoService sem precisar ser instanciada manualmente. Para isso, no construtor da classe `PensamentoService`, incluiremos um parâmetro chamado http com o modificador de acesso private e o tipo de dependência `HttpClient`. O modificador private permite que esse parâmetro seja automaticamente declarado como um atributo da classe.
+```
+export class PensamentoService {
+    constructor(http: HttpClient) { }
+}
+```
+
+
+
