@@ -386,7 +386,7 @@ Em seguida vamos inserir a função do tipo arrow function para permitir que a l
         });
     }
 ```
-#### Criar Pensamento
+### Criar Pensamento
 Acessaremos novamente o VS Code e configuraremos o cadastro. Dentro do arquivo `pensamento.service.ts`, abaixo do método de listagem, digitaremos o método `criar()` e dentro dele vamos inserir a variável pensamento do tipo Pensamento, que também retornará um Observable de Pensamento, mas dessa vez o retorno não será um arranjo.
 
 Dentro de criar(), vamos inserir um return com o método post, a URL da API e também o pensamento que iremos cadastrar.
@@ -558,4 +558,3 @@ Em seguida acessaremos o HTML do componente do cartão: `pensamento.component.ht
         </button>
 ```
 Pronto, agora vamos testar o código. Inicie o front-end caso não esteja rodando com `ng serve`.
-### Criar um CRUD.
