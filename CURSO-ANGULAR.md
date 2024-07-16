@@ -311,7 +311,7 @@ export class PensamentoService {
 }
 ```
 
-## 05 - Requisições HTTP
+## 06 - Requisições HTTP
 
 As requisições HTTP são a forma como os aplicativos web se comunicam com o servidor. Elas são a base da comunicação na web, permitindo que os clientes (como um navegador web) enviem solicitações para o servidor e recebam respostas.
 Métodos HTTP: GET, POST, PUT, DELETE, etc. Esses métodos definem a ação que o cliente deseja realizar no servidor.
